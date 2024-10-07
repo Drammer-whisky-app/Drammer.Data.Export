@@ -15,7 +15,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{8E741E36-AF1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{11BBED6A-4B67-4B11-9A33-6660207BFC9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drammer.Data.Export.Tests", "Drammer.Data.Export.Tests\Drammer.Data.Export.Tests.csproj", "{FB245A0F-2284-4BE9-AE12-520766B59450}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drammer.Data.Export.Tests", "src\Drammer.Data.Export.Tests\Drammer.Data.Export.Tests.csproj", "{FB245A0F-2284-4BE9-AE12-520766B59450}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Workflows", "Workflows", "{ABDE38BF-A2F2-4BC2-88A9-AA2B359B4894}"
+	ProjectSection(SolutionItems) = preProject
+		.github\dependabot.yml = .github\dependabot.yml
+		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

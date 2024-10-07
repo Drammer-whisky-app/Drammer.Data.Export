@@ -31,7 +31,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\src\Drammer.Data.Export\Drammer.Data.Export.csproj" />
+      <ProjectReference Include="..\Drammer.Data.Export\Drammer.Data.Export.csproj" />
     </ItemGroup>
 
 </Project>
