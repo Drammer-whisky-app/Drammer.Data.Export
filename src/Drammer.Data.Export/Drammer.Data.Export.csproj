@@ -9,12 +9,12 @@
         <GenerateDocumentationFile>True</GenerateDocumentationFile>
         <Authors>Marthijn van den Heuvel,Drammer</Authors>
         <Copyright>Copyright (c) 2024 Drammer whisky app</Copyright>
-        <PackageId>Drammer.Common</PackageId>
+        <PackageId>Drammer.Data.Export</PackageId>
         <RepositoryType>git</RepositoryType>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Description>This package contains file export functionality for the Drammer whisky app.</Description>
-        <PackageTags>extensions</PackageTags>
+        <PackageTags>csv excel export</PackageTags>
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <Deterministic>true</Deterministic>
