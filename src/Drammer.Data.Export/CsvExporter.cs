@@ -6,7 +6,7 @@ namespace Drammer.Data.Export;
 /// <summary>
 /// The CSV exporter.
 /// </summary>
-public sealed class CsvExporter : ExporterBase<string, DefaultHeader>, IExportableAsync
+public sealed class CsvExporter : ExporterBase<string, TextHeader>, IExportableAsync
 {
     /// <summary>
     /// The delimiter.
@@ -22,7 +22,7 @@ public sealed class CsvExporter : ExporterBase<string, DefaultHeader>, IExportab
     /// <param name="delimiter">
     /// The delimiter.
     /// </param>
-    public CsvExporter(DataTable<DefaultHeader> data, string? delimiter = ";")
+    public CsvExporter(DataTable<TextHeader> data, string? delimiter = ";")
     {
         DataTable = data;
         _delimiter = delimiter ?? string.Empty;

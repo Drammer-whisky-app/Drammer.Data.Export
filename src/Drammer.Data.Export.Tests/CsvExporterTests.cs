@@ -6,7 +6,7 @@ public sealed class CsvExporterTests
     public void Export_ProducesCsvData()
     {
         // arrange
-        var data = new DataTable<DefaultHeader>(new[] { new DefaultHeader("test1"), new DefaultHeader("test1") });
+        var data = new DataTable<TextHeader>(new[] { new TextHeader("test1"), new TextHeader("test1") });
         data.AddRow(new DataRow { new string("val1"), new string("val2") });
 
         var csvExporter = new CsvExporter(data);
@@ -23,7 +23,7 @@ public sealed class CsvExporterTests
     public void Export_WithNullValues_ProducesCsvData()
     {
         // arrange
-        var data = new DataTable<DefaultHeader>(new[] { new DefaultHeader("test1"), new DefaultHeader("test1") });
+        var data = new DataTable<TextHeader>(new[] { new TextHeader("test1"), new TextHeader("test1") });
         data.AddRow(new DataRow { null, new string("val2") });
 
         var csvExporter = new CsvExporter(data);
@@ -40,7 +40,7 @@ public sealed class CsvExporterTests
     public void Export_NoCsvInjection()
     {
         // arrange
-        var data = new DataTable<DefaultHeader>(new[] { new DefaultHeader("=test1"), new DefaultHeader("test1") });
+        var data = new DataTable<TextHeader>(new[] { new TextHeader("=test1"), new TextHeader("test1") });
         data.AddRow(new DataRow { new string("+val1"), new string("val2") });
 
         var csvExporter = new CsvExporter(data);
@@ -57,7 +57,7 @@ public sealed class CsvExporterTests
     public void ExportToByteArray()
     {
         // arrange
-        var data = new DataTable<DefaultHeader>(new[] { new DefaultHeader("test1"), new DefaultHeader("test1") });
+        var data = new DataTable<TextHeader>(new[] { new TextHeader("test1"), new TextHeader("test1") });
         data.AddRow(new DataRow { new string("val1"), new string("val2") });
 
         var csvExporter = new CsvExporter(data);
@@ -77,7 +77,7 @@ public sealed class CsvExporterTests
     public async Task ExportToByteArrayAsync()
     {
         // arrange
-        var data = new DataTable<DefaultHeader>(new[] { new DefaultHeader("test1"), new DefaultHeader("test1") });
+        var data = new DataTable<TextHeader>(new[] { new TextHeader("test1"), new TextHeader("test1") });
         data.AddRow(new DataRow { new string("val1"), new string("val2") });
 
         var csvExporter = new CsvExporter(data);
