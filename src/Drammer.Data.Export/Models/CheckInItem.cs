@@ -2,7 +2,7 @@
 
 public sealed record CheckInItem
 {
-    public required string BottlingName { get; init; }
+    public string? BottlingName { get; init; }
 
     public string? CaskNumber { get; init; }
 

@@ -1,4 +1,4 @@
-﻿namespace Drammer.Data.Export;
+﻿namespace Drammer.Data.Export.Csv;
 
 public sealed class CsvExportOptions
 {

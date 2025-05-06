@@ -1,26 +1,29 @@
 ﻿using System.Globalization;
-using System.Text;
 using Drammer.Data.Export.Models;
+using Drammer.Data.Export.Pdf;
 using Microsoft.Extensions.Options;
+using QuestPDF.Infrastructure;
 
-namespace Drammer.Data.Export.Tests;
+namespace Drammer.Data.Export.Tests.Pdf;
 
-public sealed class CsvExportServiceTests
+public sealed class PdfExportServiceTests
 {
     private readonly Fixture _fixture = new ();
 
-    public CsvExportServiceTests()
+    public PdfExportServiceTests()
     {
         _fixture.Customize<decimal>(c => c.FromFactory<int>(x => x * 1.99m * Random.Shared.Next(1, 10)));
+
+        QuestPDF.Settings.License = LicenseType.Community; // license used for unit testing
     }
 
     [Theory]
     [InlineData("nl")]
     [InlineData("us")]
-    public async Task ExportWishlistAsync_ReturnsData(string culture)
+    public async Task ExportWishListAsync_ReturnsResult(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var exportService = new PdfExportService(Options.Create(new PdfExportOptions()));
         var wishListItems = _fixture.CreateMany<WishListItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -29,20 +32,19 @@ public sealed class CsvExportServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Data.Should().NotBeNullOrEmpty();
-        result.ContentType.Should().Be("text/csv");
+        result.ContentType.Should().Be("application/pdf");
 
-        var fileContents = GetFileContents(result);
-        fileContents.Should().Contain("Bottling;Rating;Date added;ABV");
-        CountLines(fileContents).Should().Be(wishListItems.Count + 1);
+        ////using var stream = new FileStream("document.pdf", FileMode.Create);
+        ////await stream.WriteAsync(result.Data);
     }
 
     [Theory]
     [InlineData("nl")]
     [InlineData("us")]
-    public async Task ExportCollectionAsync_ReturnsData(string culture)
+    public async Task ExportCollectionAsync_ReturnsResult(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var exportService = new PdfExportService(Options.Create(new PdfExportOptions()));
         var data = _fixture.CreateMany<CollectionItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -51,19 +53,16 @@ public sealed class CsvExportServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Data.Should().NotBeNullOrEmpty();
-        result.ContentType.Should().Be("text/csv");
-
-        var fileContents = GetFileContents(result);
-        CountLines(fileContents).Should().Be(data.Count + 1);
+        result.ContentType.Should().Be("application/pdf");
     }
 
     [Theory]
     [InlineData("nl")]
     [InlineData("us")]
-    public async Task ExportCheckInsAsync_ReturnsData(string culture)
+    public async Task ExportCheckInsAsync_ReturnsResult(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var exportService = new PdfExportService(Options.Create(new PdfExportOptions()));
         var data = _fixture.CreateMany<CheckInItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -72,13 +71,6 @@ public sealed class CsvExportServiceTests
         // Assert
         result.Should().NotBeNull();
         result.Data.Should().NotBeNullOrEmpty();
-        result.ContentType.Should().Be("text/csv");
-
-        var fileContents = GetFileContents(result);
-        CountLines(fileContents).Should().Be(data.Count + 1);
+        result.ContentType.Should().Be("application/pdf");
     }
-
-    private static string GetFileContents(ExportResult result) => Encoding.Default.GetString(result.Data);
-
-    private static int CountLines(string data) => data.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries).Length;
 }

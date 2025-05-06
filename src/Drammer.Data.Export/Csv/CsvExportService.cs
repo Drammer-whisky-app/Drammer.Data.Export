@@ -4,9 +4,9 @@ using System.Text;
 using Drammer.Data.Export.Models;
 using Microsoft.Extensions.Options;
 
-namespace Drammer.Data.Export;
+namespace Drammer.Data.Export.Csv;
 
-internal sealed class CsvExportService : IExportService
+internal sealed class CsvExportService : ICsvExportService
 {
     private readonly IOptions<CsvExportOptions> _options;
 

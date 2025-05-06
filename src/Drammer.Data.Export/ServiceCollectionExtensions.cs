@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Drammer.Data.Export.Csv;
+using Drammer.Data.Export.Pdf;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,7 +15,18 @@ public static class ServiceCollectionExtensions
         services.AddOptions<CsvExportOptions>().Configure<IConfiguration>(
             (settings, configuration) => { configuration.GetSection(configurationSection).Bind(settings); });
 
-        services.AddKeyedSingleton<IExportService, CsvExportService>("csv");
+        services.AddSingleton<ICsvExportService, CsvExportService>();
+        return services;
+    }
+
+    public static IServiceCollection AddPdfExportServices(
+        this IServiceCollection services,
+        [ConstantExpected] string configurationSection = PdfExportOptions.SectionName)
+    {
+        services.AddOptions<PdfExportOptions>().Configure<IConfiguration>(
+            (settings, configuration) => { configuration.GetSection(configurationSection).Bind(settings); });
+
+        services.AddSingleton<IPdfExportService, PdfExportService>();
         return services;
     }
 }
