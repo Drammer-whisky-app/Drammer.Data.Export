@@ -4,7 +4,7 @@ public sealed record CheckInItem
 {
     public string? BottlingName { get; init; }
 
-    public string? CaskNumber { get; init; }
+    public string? DrmId { get; init; }
 
     public int? YearBottled { get; init; }
 

@@ -19,6 +19,8 @@ public sealed class PdfExportOptions
 
     public string TitleCheckInExport { get; init; } = "Check-in Export";
 
+    public string FontFamily { get; init; } = "Lato";
+
     public Color DefaultFontColor { get; init; } = Colors.Black;
 
     public Color TableHeaderFontColor { get; init; } = Colors.Black;
@@ -28,6 +30,8 @@ public sealed class PdfExportOptions
     public Color FooterFontColor { get; init; } = Colors.Black;
 
     public int FontSize { get; init; } = 12;
+
+    public float LineHeight { get; init; } = 1.7f;
 
     public int HeaderFontSize { get; init; } = 20;
 

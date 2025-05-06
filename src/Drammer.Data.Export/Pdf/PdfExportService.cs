@@ -34,6 +34,7 @@ internal sealed class PdfExportService : IPdfExportService
                             page.PageColor(Colors.White);
                             page.DefaultTextStyle(x => x
                                 .FontSize(_options.Value.FontSize)
+                                .LineHeight(_options.Value.LineHeight)
                                 .FontColor(_options.Value.DefaultFontColor));
 
                             page
@@ -47,8 +48,7 @@ internal sealed class PdfExportService : IPdfExportService
 
                             page
                                 .Footer()
-                                .AlignCenter()
-                                .Text(Footer(creationDate, cultureInfo));
+                                .Row(r => FooterRow(r, creationDate, cultureInfo));
                         });
                     })
                     .WithMetadata(
@@ -79,6 +79,7 @@ internal sealed class PdfExportService : IPdfExportService
                             page.PageColor(Colors.White);
                             page.DefaultTextStyle(x => x
                                 .FontSize(_options.Value.FontSize)
+                                .LineHeight(_options.Value.LineHeight)
                                 .FontColor(_options.Value.DefaultFontColor));
 
                             page
@@ -102,8 +103,7 @@ internal sealed class PdfExportService : IPdfExportService
 
                             page
                                 .Footer()
-                                .AlignCenter()
-                                .Text(Footer(creationDate, cultureInfo));
+                                .Row(r => FooterRow(r, creationDate, cultureInfo));
                         });
                     })
                     .WithMetadata(
@@ -134,6 +134,8 @@ internal sealed class PdfExportService : IPdfExportService
                             page.PageColor(Colors.White);
                             page.DefaultTextStyle(x => x
                                 .FontSize(_options.Value.FontSize)
+                                .FontFamily(_options.Value.FontFamily)
+                                .LineHeight(_options.Value.LineHeight)
                                 .FontColor(_options.Value.DefaultFontColor));
 
                             page
@@ -157,8 +159,7 @@ internal sealed class PdfExportService : IPdfExportService
 
                             page
                                 .Footer()
-                                .AlignCenter()
-                                .Text(Footer(creationDate, cultureInfo));
+                                .Row(r => FooterRow(r, creationDate, cultureInfo));
                         });
                     })
                     .WithMetadata(
@@ -213,39 +214,52 @@ internal sealed class PdfExportService : IPdfExportService
             table.ColumnsDefinition(columns =>
             {
                 columns.RelativeColumn();
-                columns.ConstantColumn(100);
-                columns.ConstantColumn(75);
-                columns.ConstantColumn(75);
+                columns.ConstantColumn(80);
+                columns.ConstantColumn(80);
+                columns.ConstantColumn(40);
+                columns.ConstantColumn(50);
             });
 
             table.Header(header =>
             {
                 header.Cell().Element(HeaderCellStyle).Text("Bottling").SemiBold();
+                header.Cell().Element(HeaderCellStyle).Text("Id").SemiBold();
                 header.Cell().Element(HeaderCellStyle).Text("Date added").SemiBold();
                 header.Cell().Element(HeaderCellStyle).Text("Rating").SemiBold();
                 header.Cell().Element(HeaderCellStyle).Text("ABV").SemiBold();
                 return;
 
                 IContainer HeaderCellStyle(IContainer container) =>
-                    DefaultCellStyle(container, _options.Value.TableHeaderFontColor)
-                        .PaddingVertical(4)
-                        .PaddingHorizontal(8);
+                    DefaultCellStyle(container, _options.Value.TableHeaderFontColor);
             });
 
             foreach (var d in data)
             {
                 table.Cell().Element(CellStyle).AlignLeft().Text(d.BottlingName);
+                table.Cell().Element(CellStyle).AlignLeft().Text(d.DrmId);
                 table.Cell().Element(CellStyle).AlignLeft().Text(d.DateAdded.ToShortDateValue(cultureInfo));
                 table.Cell().Element(CellStyle).AlignRight().Text(d.Rating.ToStringValue(cultureInfo));
-                table.Cell().Element(CellStyle).AlignRight().Text($"{d.Abv.ToStringValue(cultureInfo)}%");
+                table.Cell().Element(CellStyle).AlignRight().Text(d.Abv.HasValue? $"{d.Abv.ToStringValue(cultureInfo)}%" : string.Empty);
             }
 
             return;
 
-            IContainer CellStyle(IContainer container) => DefaultCellStyle(container, _options.Value.DefaultFontColor)
-                .PaddingVertical(4)
-                .PaddingHorizontal(8);
+            IContainer CellStyle(IContainer container) => DefaultCellStyle(container, _options.Value.DefaultFontColor);
         };
+    }
+
+    private void FooterRow(RowDescriptor row, DateTimeOffset creationDate, CultureInfo cultureInfo)
+    {
+        row.RelativeItem().AlignLeft().Text(Footer(creationDate, cultureInfo));
+        row.ConstantItem(50).AlignRight().Text(x =>
+        {
+            x.DefaultTextStyle(y => y
+                .FontSize(_options.Value.FooterFontSize)
+                .FontColor(_options.Value.FooterFontColor));
+            x.CurrentPageNumber();
+            x.Span(" / ");
+            x.TotalPages();
+        });
     }
 
     private Action<TextDescriptor> Footer(DateTimeOffset creationDate, CultureInfo cultureInfo)
@@ -278,6 +292,9 @@ internal sealed class PdfExportService : IPdfExportService
             table.Cell().Text("Bottling");
             table.Cell().Text(data.BottlingName);
 
+            table.Cell().Text("Id");
+            table.Cell().Text(data.DrmId);
+
             if (data.Abv is > 0)
             {
                 table.Cell().Text("ABV");
@@ -293,10 +310,18 @@ internal sealed class PdfExportService : IPdfExportService
                 table.Cell().Text($"{data.AmountLeftInBottle.ToStringValue(cultureInfo)} ml");
             }
 
-            if (data.Price is >= 0)
+            if (data.PriceOfPurchase is >= 0)
             {
-                table.Cell().Text("Price");
-                table.Cell().Text(data.Price.ToStringValue(cultureInfo));
+                if (!string.IsNullOrWhiteSpace(data.Currency))
+                {
+                    table.Cell().Text("Price");
+                    table.Cell().Text($"{data.Currency} {data.PriceOfPurchase.ToStringValue(cultureInfo)}");
+                }
+                else
+                {
+                    table.Cell().Text("Price");
+                    table.Cell().Text(data.PriceOfPurchase.ToStringValue(cultureInfo));
+                }
             }
 
             if (!string.IsNullOrWhiteSpace(data.Store))
@@ -320,7 +345,7 @@ internal sealed class PdfExportService : IPdfExportService
             if (data.TastingNote?.Rating is > 0)
             {
                 table.Cell().Text("Rating");
-                table.Cell().Text(data.TastingNote.Rating.ToStringValue(cultureInfo));
+                table.Cell().Text(data.TastingNote.Rating.ToStringValue(cultureInfo, 1));
             }
 
             if (!string.IsNullOrWhiteSpace(data.TastingNote?.Nose))
@@ -365,6 +390,12 @@ internal sealed class PdfExportService : IPdfExportService
                 table.Cell().Text(data.BottlingName);
             }
 
+            if (!string.IsNullOrWhiteSpace(data.DrmId))
+            {
+                table.Cell().Text("Id");
+                table.Cell().Text(data.DrmId);
+            }
+
             if (!string.IsNullOrWhiteSpace(data.Location))
             {
                 table.Cell().Text("Location");
@@ -373,12 +404,6 @@ internal sealed class PdfExportService : IPdfExportService
 
             table.Cell().Text("Date");
             table.Cell().Text(data.CheckInDate.ToShortDateValue(cultureInfo));
-
-            if (!string.IsNullOrWhiteSpace(data.CaskNumber))
-            {
-                table.Cell().Text("Cask number");
-                table.Cell().Text(data.CaskNumber);
-            }
 
             if (data.YearBottled is > 0)
             {
@@ -395,7 +420,7 @@ internal sealed class PdfExportService : IPdfExportService
             if (data.TastingNote?.Rating is > 0)
             {
                 table.Cell().Text("Rating");
-                table.Cell().Text(data.TastingNote.Rating.ToStringValue(cultureInfo));
+                table.Cell().Text(data.TastingNote.Rating.ToStringValue(cultureInfo, 1));
             }
 
             if (!string.IsNullOrWhiteSpace(data.TastingNote?.Nose))

@@ -81,6 +81,7 @@ internal sealed class CsvExportService : ICsvExportService
         var header = new HashSet<string>
         {
             "Bottling",
+            "Id",
             "Rating",
             "Date added",
             "ABV"
@@ -93,6 +94,7 @@ internal sealed class CsvExportService : ICsvExportService
             List<string> row =
             [
                 d.BottlingName,
+                d.DrmId,
                 d.Rating.ToStringValue(cultureInfo) ?? string.Empty,
                 d.DateAdded.ToShortDateValue(cultureInfo) ?? string.Empty,
                 d.Abv.ToStringValue(cultureInfo) ?? string.Empty
@@ -112,10 +114,12 @@ internal sealed class CsvExportService : ICsvExportService
         var header = new HashSet<string>
         {
             "Bottling",
+            "Id",
             "Date in collection",
             "Amount left in bottle (ml)",
             "Store",
             "Price",
+            "Currency",
             "Note",
             "Rating",
             "Nose",
@@ -133,12 +137,14 @@ internal sealed class CsvExportService : ICsvExportService
             List<string> row =
             [
                 d.BottlingName,
+                d.DrmId,
                 d.DateAdded.ToShortDateValue(cultureInfo) ?? string.Empty,
                 d.AmountLeftInBottle.ToStringValue(cultureInfo) ?? string.Empty,
                 d.Store ?? string.Empty,
-                d.Price.ToStringValue(cultureInfo, 2, true) ?? string.Empty,
+                d.PriceOfPurchase.ToStringValue(cultureInfo, 2, true) ?? string.Empty,
+                d.Currency ?? string.Empty,
                 d.Note ?? string.Empty,
-                d.TastingNote?.Rating.ToStringValue(cultureInfo) ?? string.Empty,
+                d.TastingNote?.Rating.ToStringValue(cultureInfo, 1) ?? string.Empty,
                 d.TastingNote?.Nose ?? string.Empty,
                 d.TastingNote?.Palate ?? string.Empty,
                 d.TastingNote?.Finish ?? string.Empty,
@@ -161,8 +167,8 @@ internal sealed class CsvExportService : ICsvExportService
         var header = new HashSet<string>
         {
             "Bottling",
+            "Id",
             "Rating",
-            "Cask number",
             "Year bottled",
             "Review date",
             "Nose",
@@ -179,9 +185,9 @@ internal sealed class CsvExportService : ICsvExportService
         {
             List<string> row =
             [
-                d.BottlingName,
-                d.TastingNote?.Rating.ToStringValue(cultureInfo) ?? string.Empty,
-                d.CaskNumber ?? string.Empty,
+                d.BottlingName ?? string.Empty,
+                d.DrmId ?? string.Empty,
+                d.TastingNote?.Rating.ToStringValue(cultureInfo, 1) ?? string.Empty,
                 d.YearBottled?.ToString() ?? string.Empty,
                 d.CheckInDate.ToShortDateValue(cultureInfo),
                 d.TastingNote?.Nose ?? string.Empty,

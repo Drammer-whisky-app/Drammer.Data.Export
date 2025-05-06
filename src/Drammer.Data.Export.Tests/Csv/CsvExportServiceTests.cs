@@ -33,7 +33,7 @@ public sealed class CsvExportServiceTests
         result.ContentType.Should().Be("text/csv");
 
         var fileContents = GetFileContents(result);
-        fileContents.Should().Contain("Bottling;Rating;Date added;ABV");
+        fileContents.Should().Contain("Bottling;Id;Rating;Date added;ABV");
         CountLines(fileContents).Should().Be(wishListItems.Count + 1);
     }
 
