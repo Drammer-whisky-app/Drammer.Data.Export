@@ -8,7 +8,7 @@ updates:
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly"
+      interval: "monthly"
     allow:
       - dependency-name: "*"
     groups:
@@ -18,11 +18,11 @@ updates:
       tests:
         patterns:
           - "AutoFixture"
-          - "FluentAssertions"
+          - "AwesomeAssertions"
           - "xunit*"
           - "*Test*"
           - "coverlet*"
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "weekly" 
+      interval: "monthly"
