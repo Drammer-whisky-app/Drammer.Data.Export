@@ -3,16 +3,19 @@ using System.Globalization;
 using System.Text;
 using Drammer.Data.Export.Models;
 using Microsoft.Extensions.Options;
+using Sidio.ObjectPool;
 
 namespace Drammer.Data.Export.Csv;
 
 internal sealed class CsvExportService : ICsvExportService
 {
     private readonly IOptions<CsvExportOptions> _options;
+    private readonly IObjectPoolService<StringBuilder> _stringBuilderObjectPoolService;
 
-    public CsvExportService(IOptions<CsvExportOptions> options)
+    public CsvExportService(IOptions<CsvExportOptions> options, IObjectPoolService<StringBuilder> stringBuilderObjectPoolService)
     {
         _options = options;
+        _stringBuilderObjectPoolService = stringBuilderObjectPoolService;
     }
 
     public async Task<ExportResult> ExportWishListAsync(
@@ -75,7 +78,7 @@ internal sealed class CsvExportService : ICsvExportService
 
     private string ExportWishList(IEnumerable<WishListItem> data, CultureInfo cultureInfo)
     {
-        var sb = new StringBuilder();
+        using var sb = _stringBuilderObjectPoolService.Borrow();
 
         // header
         var header = new HashSet<string>
@@ -86,7 +89,7 @@ internal sealed class CsvExportService : ICsvExportService
             "Date added",
             "ABV"
         };
-        sb.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
+        sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
 
         // content
         foreach (var d in data)
@@ -100,15 +103,15 @@ internal sealed class CsvExportService : ICsvExportService
                 d.Abv.ToStringValue(cultureInfo) ?? string.Empty
             ];
 
-            sb.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
+            sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
         }
 
-        return sb.ToString();
+        return sb.Instance.ToString();
     }
 
     private string ExportCollection(IEnumerable<CollectionItem> data, CultureInfo cultureInfo)
     {
-        var sb = new StringBuilder();
+        using var sb = _stringBuilderObjectPoolService.Borrow();
 
         // header
         var header = new HashSet<string>
@@ -129,7 +132,7 @@ internal sealed class CsvExportService : ICsvExportService
             "Abv",
             "Store location",
         };
-        sb.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
+        sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
 
         // content
         foreach (var d in data)
@@ -153,15 +156,15 @@ internal sealed class CsvExportService : ICsvExportService
                 d.Location ?? string.Empty,
             ];
 
-            sb.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
+            sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
         }
 
-        return sb.ToString();
+        return sb.Instance.ToString();
     }
 
     private string ExportCheckIns(IEnumerable<CheckInItem> data, CultureInfo cultureInfo)
     {
-        var sb = new StringBuilder();
+        using var sb = _stringBuilderObjectPoolService.Borrow();
 
         // header
         var header = new HashSet<string>
@@ -178,7 +181,7 @@ internal sealed class CsvExportService : ICsvExportService
             "Abv",
             "Location",
         };
-        sb.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
+        sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, header.Select(ApplyRfc4180)));
 
         // content
         foreach (var d in data)
@@ -198,10 +201,10 @@ internal sealed class CsvExportService : ICsvExportService
                 d.Location ?? string.Empty,
             ];
 
-            sb.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
+            sb.Instance.AppendLine(string.Join(_options.Value.Delimiter, row.Select(ApplyRfc4180)));
         }
 
-        return sb.ToString();
+        return sb.Instance.ToString();
     }
 
     [return: NotNullIfNotNull(nameof(value))]

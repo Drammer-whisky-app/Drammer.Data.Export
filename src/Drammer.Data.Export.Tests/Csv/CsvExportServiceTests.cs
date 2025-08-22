@@ -3,6 +3,8 @@ using System.Text;
 using Drammer.Data.Export.Csv;
 using Drammer.Data.Export.Models;
 using Microsoft.Extensions.Options;
+using Sidio.ObjectPool;
+using Sidio.ObjectPool.Policies;
 
 namespace Drammer.Data.Export.Tests.Csv;
 
@@ -21,7 +23,8 @@ public sealed class CsvExportServiceTests
     public async Task ExportWishlistAsync_ReturnsData(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var objectPoolServiceMock = CreateObjectPoolServiceMock();
+        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()), objectPoolServiceMock.Object);
         var wishListItems = _fixture.CreateMany<WishListItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -43,7 +46,8 @@ public sealed class CsvExportServiceTests
     public async Task ExportCollectionAsync_ReturnsData(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var objectPoolServiceMock = CreateObjectPoolServiceMock();
+        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()), objectPoolServiceMock.Object);
         var data = _fixture.CreateMany<CollectionItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -64,7 +68,8 @@ public sealed class CsvExportServiceTests
     public async Task ExportCheckInsAsync_ReturnsData(string culture)
     {
         // Arrange
-        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()));
+        var objectPoolServiceMock = CreateObjectPoolServiceMock();
+        var exportService = new CsvExportService(Options.Create(new CsvExportOptions()), objectPoolServiceMock.Object);
         var data = _fixture.CreateMany<CheckInItem>(Random.Shared.Next(1, 50)).ToList();
 
         // Act
@@ -82,4 +87,14 @@ public sealed class CsvExportServiceTests
     private static string GetFileContents(ExportResult result) => Encoding.Default.GetString(result.Data);
 
     private static int CountLines(string data) => data.Split(["\r\n", "\r", "\n"], StringSplitOptions.RemoveEmptyEntries).Length;
+
+    private static Mock<IObjectPoolService<StringBuilder>> CreateObjectPoolServiceMock()
+    {
+        var objectPool = Microsoft.Extensions.ObjectPool.ObjectPool.Create(new StringBuilderPolicy());
+
+        var objectPoolServiceMock = new Mock<IObjectPoolService<StringBuilder>>();
+        objectPoolServiceMock.Setup(x => x.Borrow()).Returns(() => new Borrowed<StringBuilder>(objectPool));
+
+        return objectPoolServiceMock;
+    }
 }

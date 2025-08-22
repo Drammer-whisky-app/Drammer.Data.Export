@@ -34,6 +34,7 @@
       </PackageReference>
       <PackageReference Include="QuestPDF" Version="2025.7.0" />
       <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
+      <PackageReference Include="Sidio.ObjectPool" Version="1.0.4" />
     </ItemGroup>
 
     <ItemGroup>

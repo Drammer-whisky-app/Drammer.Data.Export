@@ -3,6 +3,7 @@ using Drammer.Data.Export.Csv;
 using Drammer.Data.Export.Pdf;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Sidio.ObjectPool;
 
 namespace Drammer.Data.Export;
 
@@ -15,6 +16,7 @@ public static class ServiceCollectionExtensions
         services.AddOptions<CsvExportOptions>().Configure<IConfiguration>(
             (settings, configuration) => { configuration.GetSection(configurationSection).Bind(settings); });
 
+        services.AddObjectPoolServices();
         services.AddSingleton<ICsvExportService, CsvExportService>();
         return services;
     }
@@ -27,6 +29,12 @@ public static class ServiceCollectionExtensions
             (settings, configuration) => { configuration.GetSection(configurationSection).Bind(settings); });
 
         services.AddSingleton<IPdfExportService, PdfExportService>();
+        return services;
+    }
+
+    private static IServiceCollection AddObjectPoolServices(this IServiceCollection services)
+    {
+        services.AddStringBuilderObjectPool();
         return services;
     }
 }
