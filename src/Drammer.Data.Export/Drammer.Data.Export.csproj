@@ -26,14 +26,14 @@
 
     <ItemGroup>
       <PackageReference Include="ClosedXML" Version="0.105.0" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
-      <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.7" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.8" />
+      <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.8" />
       <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="QuestPDF" Version="2025.5.1" />
-      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.7" />
+      <PackageReference Include="QuestPDF" Version="2025.7.0" />
+      <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.8" />
     </ItemGroup>
 
     <ItemGroup>
