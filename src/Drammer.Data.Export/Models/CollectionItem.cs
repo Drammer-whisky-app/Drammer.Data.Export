@@ -12,9 +12,13 @@ public sealed record CollectionItem
 
     public string? Store { get; init; }
 
-    public decimal? PriceOfPurchase { get; init; }
+    public decimal? PurchasePrice { get; init; }
 
-    public string? Currency { get; init; }
+    public string? PurchasePriceCurrency { get; init; }
+
+    public decimal? CurrentPrice { get; init; }
+
+    public string? CurrentPriceCurrency { get; init; }
 
     public string? Note { get; init; }
 

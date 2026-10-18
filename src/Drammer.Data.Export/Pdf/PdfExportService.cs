@@ -310,17 +310,31 @@ internal sealed class PdfExportService : IPdfExportService
                 table.Cell().Text($"{data.AmountLeftInBottle.ToStringValue(cultureInfo)} ml");
             }
 
-            if (data.PriceOfPurchase is >= 0)
+            if (data.PurchasePrice is >= 0)
             {
-                if (!string.IsNullOrWhiteSpace(data.Currency))
+                if (!string.IsNullOrWhiteSpace(data.PurchasePriceCurrency))
                 {
-                    table.Cell().Text("Price");
-                    table.Cell().Text($"{data.Currency} {data.PriceOfPurchase.ToStringValue(cultureInfo)}");
+                    table.Cell().Text("Purchase price");
+                    table.Cell().Text($"{data.PurchasePriceCurrency} {data.PurchasePrice.ToStringValue(cultureInfo)}");
                 }
                 else
                 {
-                    table.Cell().Text("Price");
-                    table.Cell().Text(data.PriceOfPurchase.ToStringValue(cultureInfo));
+                    table.Cell().Text("Purchase price");
+                    table.Cell().Text(data.PurchasePrice.ToStringValue(cultureInfo));
+                }
+            }
+
+            if (data.CurrentPrice is >= 0)
+            {
+                if (!string.IsNullOrWhiteSpace(data.CurrentPriceCurrency))
+                {
+                    table.Cell().Text("Current price");
+                    table.Cell().Text($"{data.CurrentPriceCurrency} {data.CurrentPrice.ToStringValue(cultureInfo)}");
+                }
+                else
+                {
+                    table.Cell().Text("Current price");
+                    table.Cell().Text(data.CurrentPrice.ToStringValue(cultureInfo));
                 }
             }
 
